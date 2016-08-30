@@ -1,0 +1,5 @@
+*.background: black
+*.foreground: white
+
+URxvt.font: 6x13
+URxvt.boldFont: 6x13bold
