@@ -2,3 +2,5 @@ set nocompatible
 
 set number
 set relativenumber
+
+set ts=4
