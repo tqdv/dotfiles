@@ -10,3 +10,7 @@ set shiftwidth=4
 
 set autoindent
 
+syntax on
+
+noremap Q <Nop>
+
