@@ -1,16 +1,20 @@
 set nocompatible
 
+set ruler
+set showcmd
+set modeline
+
 set number
 set relativenumber
 
+syntax on
+set hlsearch
+
+set autoindent
 set noexpandtab
 set smarttab
 set tabstop=4
 set shiftwidth=4
-
-set autoindent
-
-syntax on
 
 noremap Q <Nop>
 
