@@ -29,7 +29,7 @@ set modeline
 set wrapscan
 set hlsearch
 set redrawtime=1000
-" cf [hlmap]
+" cf _hlmap_
 set magic
 
 " Tab and Indent
@@ -48,13 +48,13 @@ set colorcolumn=81
 " Operations behaviour
 set nojoinspaces
 set tildeop
-" cf [tilderemap]
+" cf _tilderemap_
 
 " Keyboard
-" [hlmap]
+" _hlmap_
 noremap Q <Nop>
 nnoremap Q <Esc>:noh<CR>
-" [tilderemap]
+" _tilderemap_
 nnoremap ~~ ~l
 nnoremap ~` ~~
 nnoremap <C-J> gj
