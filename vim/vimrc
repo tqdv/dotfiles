@@ -1,20 +1,63 @@
+" pkg : vim
+" version : 8.0
+" help :
+" - :help options
+" - :options
+" filename : .vimrc
+
 set nocompatible
 
-set ruler
+" Command-line status 
+set showmode
 set showcmd
-set modeline
+set ruler
 
+" Left side
 set number
 set relativenumber
+set numberwidth=4
 
+" Windows
+set splitbelow
+set splitright
+
+" Files
 syntax on
-set hlsearch
+set modeline
 
-set autoindent
+" Search
+set wrapscan
+set hlsearch
+set redrawtime=1000
+" cf [hlmap]
+set magic
+
+" Tab and Indent
+set autoindent " Copies last line's indent
 set noexpandtab
+" for expandtab
 set smarttab
 set tabstop=4
 set shiftwidth=4
 
-noremap Q <Nop>
+" Line max length
+"set textwidth=80
+"set colorcolumn=+1
+set colorcolumn=81
 
+" Operations behaviour
+set nojoinspaces
+set tildeop
+" cf [tilderemap]
+
+" Keyboard
+" [hlmap]
+noremap Q <Nop>
+nnoremap Q <Esc>:noh<CR>
+" [tilderemap]
+nnoremap ~~ ~l
+nnoremap ~` ~~
+nnoremap <C-J> gj
+nnoremap <C-H> gk
+
+set backspace=indent,start
