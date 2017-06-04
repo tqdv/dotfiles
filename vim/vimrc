@@ -7,6 +7,8 @@
 
 set nocompatible
 
+colorscheme industry
+
 " Command-line status 
 set showmode
 set showcmd
@@ -22,8 +24,14 @@ set splitbelow
 set splitright
 
 " Files
+filetype on
 syntax on
-set modeline
+
+" Command-line
+set wildmenu " Enables visual autocomplete
+
+" Drawing
+set lazyredraw
 
 " Search
 set wrapscan
@@ -46,18 +54,22 @@ set shiftwidth=4
 set colorcolumn=81
 
 " Operations behaviour
-set nojoinspaces
+set nostartofline " Movements go to the first column and not first character
+set nojoinspaces " J adds only one space after punctuation
 set tildeop
 " cf _tilderemap_
 
 " Keyboard
+map Y y$
 " _hlmap_
 noremap Q <Nop>
-nnoremap Q <Esc>:noh<CR>
+nnoremap Q <silent> <Esc>:noh<CR>
 " _tilderemap_
 nnoremap ~~ ~l
 nnoremap ~` ~~
 nnoremap <C-J> gj
 nnoremap <C-H> gk
+
+inoremap jkj <Esc>
 
 set backspace=indent,start
