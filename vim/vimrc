@@ -63,7 +63,7 @@ set tildeop
 map Y y$
 " _hlmap_
 noremap Q <Nop>
-nnoremap Q <silent> <Esc>:noh<CR>
+nnoremap <silent> Q <Esc>:noh<CR>
 " _tilderemap_
 nnoremap ~~ ~l
 nnoremap ~` ~~
