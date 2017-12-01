@@ -11,3 +11,7 @@ sdu () {
 }
 
 alias rdf="df -h /" # Root filesystem disk usage
+
+adf () {
+	df -h | sed -n '1p; /^\/d/p'
+}
