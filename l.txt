@@ -1,0 +1,11 @@
+Symlink		Folder
+dbox		Dropbox
+DL			Downloads
+mu			Music
+p			Pictures
+ps			Pictures - Screenshots
+px			Porn
+t			Torrents
+ths			Torrents - HorribleSubs
+tmu			Torrents - Music
+VCS
