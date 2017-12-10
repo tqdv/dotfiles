@@ -1,12 +1,27 @@
 " pkg : vim
-" version : 8.0
 " help :
-" - :help options
-" - :options
-" filename : .vimrc
+"   - :help options
+"   - :options
+" filename : ~/.vim/vimrc
+" notes :
+"   - viminfo location is ~/.vim/viminfo
+"   - noexpandtab
+"   - :To[ggleNumbers]
+"   - Q :noh[lsearch]
+"   - ~~ switch character case
+"   - ~` switch line case
+"   - <C-J> gj
+"   - <C-H> gk
+"   - i_jkj <Esc>
 
 set nocompatible
-
+set encoding=utf-8
+set viminfo='100,<100,s10,n$HOME/.vim/viminfo
+" ' file with marks
+" < register lines
+" s register size in kB
+" n filename
+" ---
 colorscheme industry
 
 " Command-line status 
@@ -18,6 +33,7 @@ set ruler
 set number
 set relativenumber
 set numberwidth=4
+" cf _togglenumbers_
 
 " Windows
 set splitbelow
@@ -29,6 +45,19 @@ syntax on
 
 " Command-line
 set wildmenu " Enables visual autocomplete
+
+" Commands
+" _togglenumbers_
+function ToggleNumbers()
+	if &number || &relativenumber
+		set nonumber
+		set norelativenumber
+	else
+		set number
+		set relativenumber
+	endif
+endfunction
+command ToggleNumbers call ToggleNumbers()
 
 " Drawing
 set lazyredraw
