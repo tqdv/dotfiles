@@ -1,12 +1,17 @@
 #!/bin/sh
 
 # Sorted Disk Usage
+# -a --all
+# -D --dereference-args
+# -h --human-readable
+# -x --one-file-system
+# -d1 --max-depth=1
 sdu () {
 	if [ $# -eq 0 ]
 	then
-		du -xhd 1 . | sort -h;
+		du -aDhxd1 . | sort -h;
 	else
-		du -xhd 1 "$@" | sort -h;
+		du -aDhxd1 "$@" | sort -h;
 	fi
 }
 
