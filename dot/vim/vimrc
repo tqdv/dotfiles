@@ -101,4 +101,8 @@ nnoremap <C-H> gk
 
 inoremap jkj <Esc>
 
+" Keep selection when indenting
+vnoremap < <gv
+vnoremap > >gv
+
 set backspace=indent,start
