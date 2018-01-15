@@ -62,6 +62,9 @@ command ToggleNumbers call ToggleNumbers()
 " Drawing
 set lazyredraw
 
+" Text Display
+set listchars=tab:» ,trail:·,eol:↵,extends:},precedes:{,nbsp:%
+
 " Search
 set wrapscan
 set hlsearch
