@@ -103,6 +103,7 @@ nnoremap <C-J> gj
 nnoremap <C-H> gk
 
 inoremap jkj <Esc>
+vnoremap jkj <Esc>
 
 " Keep selection when indenting
 vnoremap < <gv
