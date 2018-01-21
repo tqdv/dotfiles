@@ -17,11 +17,11 @@
 set nocompatible
 set encoding=utf-8
 set viminfo='100,<100,s10,n$HOME/.vim/viminfo
-" ' file with marks
-" < register lines
-" s register size in kB
-" n filename
-" ---
+"" ' file with marks
+"" < register lines
+"" s register size in kB
+"" n filename
+"" ---
 colorscheme industry
 
 " Command-line status 
@@ -33,7 +33,10 @@ set ruler
 set number
 set relativenumber
 set numberwidth=4
-" cf _togglenumbers_
+"" cf _togglenumbers_
+
+" Tabs
+"" cf _tabnav_
 
 " Windows
 set splitbelow
@@ -42,6 +45,8 @@ set splitright
 " Files
 filetype on
 syntax on
+"" .md -> markdown (instead of modula2)
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 
 " Command-line
 set wildmenu " Enables visual autocomplete
@@ -89,24 +94,26 @@ set colorcolumn=81
 set nostartofline " Movements go to the first column and not first character
 set nojoinspaces " J adds only one space after punctuation
 set tildeop
-" cf _tilderemap_
+"" cf _tilderemap_
 
 " Keyboard
 map Y y$
-" _hlmap_
+"" _hlmap_
 noremap Q <Nop>
 nnoremap <silent> Q <Esc>:noh<CR>
-" _tilderemap_
+"" _tilderemap_
 nnoremap ~~ ~l
 nnoremap ~` ~~
 nnoremap <C-J> gj
 nnoremap <C-H> gk
-
+"" map <Esc>
 inoremap jkj <Esc>
 vnoremap jkj <Esc>
-
-" Keep selection when indenting
+"" Keep selection when indenting
 vnoremap < <gv
 vnoremap > >gv
+"" tab navigation _tabnav_
+nnoremap <Tab> gt
+nnoremap <S-Tab> gT
 
 set backspace=indent,start
