@@ -13,6 +13,8 @@
 "   - <C-J> gj
 "   - <C-H> gk
 "   - i_jkj <Esc>
+"   - v_<Space><Space> <Esc>
+"   - listchars are set (use `set list`)
 
 set nocompatible
 set encoding=utf-8
@@ -108,7 +110,7 @@ nnoremap <C-J> gj
 nnoremap <C-H> gk
 "" map <Esc>
 inoremap jkj <Esc>
-vnoremap jkj <Esc>
+vnoremap <Space><Space> <Esc>
 "" Keep selection when indenting
 vnoremap < <gv
 vnoremap > >gv
