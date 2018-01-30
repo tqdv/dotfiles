@@ -98,6 +98,13 @@ set nojoinspaces " J adds only one space after punctuation
 set tildeop
 "" cf _tilderemap_
 
+" Editing
+"" Matching
+set showmatch " jump briefly
+set matchtime=2 " in tenths of seconds
+"set matchpairs+=<:>
+highlight MatchParen ctermbg=grey ctermfg=black
+
 " Keyboard
 map Y y$
 "" _hlmap_
