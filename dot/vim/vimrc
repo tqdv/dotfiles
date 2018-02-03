@@ -6,36 +6,42 @@
 " notes :
 "   - viminfo location is ~/.vim/viminfo
 "   - noexpandtab
-"   - :To[ggleNumbers]
+"   - :Nu[mbers]
+"   - :L[ist]
 "   - Q :noh[lsearch]
 "   - ~~ switch character case
 "   - ~` switch line case
-"   - <C-J> gj
-"   - <C-H> gk
+"   - <C-(H|J|K|L)> <C-W>(h|j|k|l)
 "   - i_jkj <Esc>
 "   - v_<Space><Space> <Esc>
-"   - listchars are set (use `set list`)
+"   - v_* and v_# work like Normal mode
 
 set nocompatible
 set encoding=utf-8
 set viminfo='100,<100,s10,n$HOME/.vim/viminfo
-"" ' file with marks
-"" < register lines
-"" s register size in kB
-"" n filename
-"" ---
-colorscheme industry
+" ' file with marks
+" < register lines
+" s register size in kB
+" n filename
+set history=50
+set background=dark
+try
+    colorscheme industry
+catch
+endtry
 
 " Command-line status 
 set showmode
 set showcmd
 set ruler
+set laststatus=2 " Always show status-line
 
 " Left side
 set number
 set relativenumber
 set numberwidth=4
 "" cf _togglenumbers_
+"set foldcolumn=2
 
 " Tabs
 "" cf _tabnav_
@@ -44,14 +50,16 @@ set numberwidth=4
 set splitbelow
 set splitright
 
+" Command-line
+set langmenu=en
+set wildmenu " Enable visual autocomplete
+
 " Files
-filetype on
-syntax on
+filetype plugin indent on
+syntax enable
 "" .md -> markdown (instead of modula2)
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-
-" Command-line
-set wildmenu " Enables visual autocomplete
+let g:is_bash = 1 " .sh is bash
 
 " Commands
 " _togglenumbers_
@@ -64,13 +72,15 @@ function ToggleNumbers()
 		set relativenumber
 	endif
 endfunction
-command ToggleNumbers call ToggleNumbers()
+command Numbers call ToggleNumbers()
+command List set list!
 
 " Drawing
 set lazyredraw
 
 " Text Display
 set listchars=tab:» ,trail:·,eol:↵,extends:},precedes:{,nbsp:%
+set scrolloff=3 " Lines around the cursor
 
 " Search
 set wrapscan
@@ -78,9 +88,11 @@ set hlsearch
 set redrawtime=1000
 " cf _hlmap_
 set magic
+" cf _v_star_
 
 " Tab and Indent
 set autoindent " Copies last line's indent
+set smartindent " C-like indent
 set noexpandtab
 " for expandtab
 set smarttab
@@ -106,23 +118,33 @@ set matchtime=2 " in tenths of seconds
 highlight MatchParen ctermbg=grey ctermfg=black
 
 " Keyboard
+"" Timeout
+set timeoutlen=300
+"" Keys
 map Y y$
-"" _hlmap_
+""" _hlmap_
 noremap Q <Nop>
 nnoremap <silent> Q <Esc>:noh<CR>
-"" _tilderemap_
+""" _tilderemap_
 nnoremap ~~ ~l
 nnoremap ~` ~~
-nnoremap <C-J> gj
-nnoremap <C-H> gk
+noremap <C-H> <C-W>h
+noremap <C-J> <C-W>j
+noremap <C-K> <C-W>k
+noremap <C-L> <C-W>l
 "" map <Esc>
 inoremap jkj <Esc>
 vnoremap <Space><Space> <Esc>
 "" Keep selection when indenting
 vnoremap < <gv
 vnoremap > >gv
+"" _v_star_
+vnoremap <expr> * 'y/\V' . escape(@", '\') . '<CR>'
+vnoremap <expr> # 'y?\V' . escape(@", '\') . '<CR>'
 "" tab navigation _tabnav_
 nnoremap <Tab> gt
 nnoremap <S-Tab> gT
+"" Wrapping
+set backspace=2 " Expected behaviour
+set whichwrap=b,s,<,>,[,] " <BS>, <Space>, <Left>, <Right>
 
-set backspace=indent,start
