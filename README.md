@@ -34,6 +34,11 @@ Ressources :
   - [amix/vimrc][amix_vimrc] (I don't really like it, but it's useful as a reference)
   - [thoughtbot/dotfiles][thoughtbot_dotfiles] (Initial inspiration for my vimrc)
 
+### vimrc-min
+
+As sometimes I don't have access to my usual vimrc, this is an attempt at
+a smaller version (~50 lines) to remember.
+
 [search_visual]: http://vim.wikia.com/wiki/Search_for_visually_selected_text
 [amix_vimrc]: https://github.com/amix/vimrc/blob/master/vimrcs/basic.vim
 [thoughtbot_dotfiles]: https://github.com/thoughtbot/dotfiles/blob/master/vimrc
