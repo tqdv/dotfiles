@@ -153,22 +153,22 @@ set shiftwidth=4
 
 " Keyboard {{{
 map Y y$
-""" _hlmap_ {{{
+"" _hlmap_ {{{
 noremap Q <Nop>
 nnoremap <silent> Q <Esc>:noh<CR>
-""" }}}
-""" Keep selection when indenting {{{
+"" }}}
+"" Keep selection when indenting {{{
 vnoremap < <gv
 vnoremap > >gv
-""" }}}
-""" _v_star_ {{{
+"" }}}
+"" _v_star_ {{{
 vnoremap <expr> * 'y/\V' . escape(@", '\') . '<CR>'
 vnoremap <expr> # 'y?\V' . escape(@", '\') . '<CR>'
-""" }}}
-""" tab navigation _tabnav_ {{{
+"" }}}
+"" tab navigation _tabnav_ {{{
 nnoremap <Tab> gt
 nnoremap <S-Tab> gT
-""" }}}
+"" }}}
 "" _tilderemap_ {{{
 nnoremap ~~ ~l
 nnoremap ~` ~~
@@ -185,4 +185,4 @@ vnoremap <Space><Space> <Esc>
 "" }}}
 " }}}
 
-" vim: fdm=marker fdl=1
+" vim: fdm=marker fdl=1 fdc=2
