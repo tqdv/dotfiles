@@ -1,40 +1,31 @@
-"   - :L[ist]
+" version: 0.2.0
+" notes:
 "   - Q :noh[lsearch]
-"   - <C-(H|J|K|L)> <C-W>(h|j|k|l)
 "   - i_jkj <Esc>
 
 set nocompatible
 set encoding=utf-8
 set history=50
-set background=dark
-colorscheme industry
 
-set showcmd ruler
+set ruler
 set number relativenumber numberwidth=4
-set wildmenu
 
 set splitbelow splitright
 
 filetype plugin indent on
 syntax enable
 
-set list listchars=tab:» ,trail:·,nbsp:%
+set listchars=tab:» ,trail:·
 " ^K>> ^K<Space><Space> ^K.M 
 
 set hlsearch
-highlight MatchParen ctermbg=grey ctermfg=black
+noremap <silent> Q <Esc>:noh<CR>
 
 set autoindent smartindent smarttab
 set tabstop=4 shiftwidth=4
 
 set timeoutlen=300
 map Y y$
-noremap Q <Nop>
-nnoremap <silent> Q <Esc>:noh<CR>
-noremap <C-H> <C-W>h
-noremap <C-J> <C-W>j
-noremap <C-K> <C-W>k
-noremap <C-L> <C-W>l
 inoremap jkj <Esc>
 
 set backspace=2

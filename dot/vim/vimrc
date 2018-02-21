@@ -1,9 +1,12 @@
-" pkg : vim
-" help :
+" pkg: vim
+" version: 1.1.0
+" Header {{{
+" help:
 "   - :help options
 "   - :options
-" filename : ~/.vim/vimrc
-" notes :
+" filename: ~/.vim/vimrc
+" notes:
+"   - do not use this vimrc as root (modelines are enabled)
 "   - viminfo location is ~/.vim/viminfo
 "   - noexpandtab
 "   - :Nu[mbers]
@@ -15,54 +18,90 @@
 "   - i_jkj <Esc>
 "   - v_<Space><Space> <Esc>
 "   - v_* and v_# work like Normal mode
+" }}}
 
+" General settings {{{
 set nocompatible
 set encoding=utf-8
+"" History {{{
 set viminfo='100,<100,s10,n$HOME/.vim/viminfo
 " ' file with marks
 " < register lines
 " s register size in kB
 " n filename
 set history=50
+"" }}}
+"" Colors {{{
 set background=dark
 try
     colorscheme industry
 catch
 endtry
+"" }}}
+" }}}
 
-" Command-line status 
+" Interface {{{
+"" Command-line status {{{
 set showmode
 set showcmd
 set ruler
 set laststatus=2 " Always show status-line
-
-" Left side
+"" }}}
+"" Left side {{{
 set number
 set relativenumber
 set numberwidth=4
-"" cf _togglenumbers_
+" cf _togglenumbers_
 "set foldcolumn=2
-
-" Tabs
-"" cf _tabnav_
-
-" Windows
-set splitbelow
-set splitright
-
-" Command-line
+"" }}}
+"" Command-line {{{
 set langmenu=en
 set wildmenu " Enable visual autocomplete
+"" }}}
+" }}}
 
-" Files
+" Behaviour {{{
+"" Search {{{
+set wrapscan
+set hlsearch
+set redrawtime=1000
+" cf _hlmap_
+set magic
+" cf _v_star_
+"" }}}
+"" Windows {{{
+set splitbelow
+set splitright
+"" }}}
+"" Operations behaviour {{{
+set nostartofline " Movements go to the first column and not first character
+set nojoinspaces " J adds only one space after punctuation
+set tildeop
+" cf _tilderemap_
+"" }}}
+"" Timeout {{{
+set timeoutlen=300
+" }}}
+" }}}
+
+" Tabs {{{
+"" cf _tabnav_
+" }}}
+
+
+" Files {{{
 filetype plugin indent on
 syntax enable
-"" .md -> markdown (instead of modula2)
+"" Filetypes {{{
+""" .md -> markdown (instead of modula2)
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:is_bash = 1 " .sh is bash
+"" }}}
+set modeline
+" }}}
 
-" Commands
-" _togglenumbers_
+" Commands {{{
+"" _togglenumbers_ {{{
 function ToggleNumbers()
 	if &number || &relativenumber
 		set nonumber
@@ -73,24 +112,35 @@ function ToggleNumbers()
 	endif
 endfunction
 command Numbers call ToggleNumbers()
+"" }}}
 command List set list!
+" open current file in leafpad (if it exists)
+command Leaf !leafpad %
+" }}}
 
-" Drawing
+" Text Display {{{
 set lazyredraw
-
-" Text Display
 set listchars=tab:» ,trail:·,eol:↵,extends:},precedes:{,nbsp:%
 set scrolloff=3 " Lines around the cursor
+"" Line max length {{{
+"set textwidth=80
+"set colorcolumn=+1
+set colorcolumn=81
+"" }}}
+" }}}
 
-" Search
-set wrapscan
-set hlsearch
-set redrawtime=1000
-" cf _hlmap_
-set magic
-" cf _v_star_
-
-" Tab and Indent
+" Editing {{{
+"" Matching {{{
+set showmatch " jump briefly
+set matchtime=2 " in tenths of seconds
+"set matchpairs+=<:>
+highlight MatchParen ctermbg=grey ctermfg=black
+"" }}}
+"" Wrapping {{{
+set backspace=2 " Expected behaviour
+set whichwrap=b,s,<,>,[,] " <BS>, <Space>, <Left>, <Right>
+"" }}}
+"" Tab and Indent {{{
 set autoindent " Copies last line's indent
 set smartindent " C-like indent
 set noexpandtab
@@ -98,53 +148,41 @@ set noexpandtab
 set smarttab
 set tabstop=4
 set shiftwidth=4
+"" }}}
+" }}}
 
-" Line max length
-"set textwidth=80
-"set colorcolumn=+1
-set colorcolumn=81
-
-" Operations behaviour
-set nostartofline " Movements go to the first column and not first character
-set nojoinspaces " J adds only one space after punctuation
-set tildeop
-"" cf _tilderemap_
-
-" Editing
-"" Matching
-set showmatch " jump briefly
-set matchtime=2 " in tenths of seconds
-"set matchpairs+=<:>
-highlight MatchParen ctermbg=grey ctermfg=black
-
-" Keyboard
-"" Timeout
-set timeoutlen=300
-"" Keys
+" Keyboard {{{
 map Y y$
-""" _hlmap_
+""" _hlmap_ {{{
 noremap Q <Nop>
 nnoremap <silent> Q <Esc>:noh<CR>
-""" _tilderemap_
+""" }}}
+""" Keep selection when indenting {{{
+vnoremap < <gv
+vnoremap > >gv
+""" }}}
+""" _v_star_ {{{
+vnoremap <expr> * 'y/\V' . escape(@", '\') . '<CR>'
+vnoremap <expr> # 'y?\V' . escape(@", '\') . '<CR>'
+""" }}}
+""" tab navigation _tabnav_ {{{
+nnoremap <Tab> gt
+nnoremap <S-Tab> gT
+""" }}}
+"" _tilderemap_ {{{
 nnoremap ~~ ~l
 nnoremap ~` ~~
+"" }}}
+"" Windows navigation {{{
 noremap <C-H> <C-W>h
 noremap <C-J> <C-W>j
 noremap <C-K> <C-W>k
 noremap <C-L> <C-W>l
-"" map <Esc>
+"" }}}
+"" map <Esc> {{{
 inoremap jkj <Esc>
 vnoremap <Space><Space> <Esc>
-"" Keep selection when indenting
-vnoremap < <gv
-vnoremap > >gv
-"" _v_star_
-vnoremap <expr> * 'y/\V' . escape(@", '\') . '<CR>'
-vnoremap <expr> # 'y?\V' . escape(@", '\') . '<CR>'
-"" tab navigation _tabnav_
-nnoremap <Tab> gt
-nnoremap <S-Tab> gT
-"" Wrapping
-set backspace=2 " Expected behaviour
-set whichwrap=b,s,<,>,[,] " <BS>, <Space>, <Left>, <Right>
+"" }}}
+" }}}
 
+" vim: fdm=marker fdl=1
