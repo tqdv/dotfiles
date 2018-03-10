@@ -79,13 +79,11 @@ set nojoinspaces " J adds only one space after punctuation
 set tildeop
 " cf _tilderemap_
 "" }}}
-"" Timeout {{{
 set timeoutlen=300
-" }}}
 " }}}
 
 " Tabs {{{
-"" cf _tabnav_
+" cf _tabnav_
 " }}}
 
 
@@ -93,7 +91,7 @@ set timeoutlen=300
 filetype plugin indent on
 syntax enable
 "" Filetypes {{{
-""" .md -> markdown (instead of modula2)
+" .md -> markdown (instead of modula2)
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:is_bash = 1 " .sh is bash
 "" }}}
@@ -162,8 +160,10 @@ vnoremap < <gv
 vnoremap > >gv
 "" }}}
 "" _v_star_ {{{
-vnoremap <expr> * 'y/\V' . escape(@", '\') . '<CR>'
-vnoremap <expr> # 'y?\V' . escape(@", '\') . '<CR>'
+" In two parts because we need to update @" before escaping it.
+nnoremap <expr> <F13> '\V' . escape(@", '\') . '<CR>'
+vmap * y/<F13>
+vmap # y?<F13>
 "" }}}
 "" tab navigation _tabnav_ {{{
 nnoremap <Tab> gt
