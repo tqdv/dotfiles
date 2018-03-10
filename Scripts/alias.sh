@@ -33,4 +33,6 @@ adf () {
 	df -h | sed -n '1p; /^\/d/p'
 }
 
+alias ,iftop="iftop -B -m 1024K -n"
+
 alias ,=comma
