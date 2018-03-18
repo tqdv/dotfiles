@@ -1,0 +1,16 @@
+test -s ~/.alias && . ~/.alias || true
+
+PATH=$PATH:/opt/pycharm/bin:/opt/gitkraken:$HOME/Software/Scripts
+
+DOTFILES=$HOME/Work/VCS/dotfiles
+source $DOTFILES/Scripts/opensuse.sh
+source $DOTFILES/Scripts/alias.sh
+source $DOTFILES/Scripts/sns.sh
+source $DOTFILES/Scripts/comma.sh
+
+export MAN_POSIXLY_CORRECT=1
+export LESS=iqRJ
+# --ignore-case --quiet --RAW-CONTROL-CHARS --status-column
+
+export EDITOR=/usr/bin/vim
+
