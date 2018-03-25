@@ -161,9 +161,17 @@ vnoremap > >gv
 "" }}}
 "" _v_star_ {{{
 " In two parts because we need to update @" before escaping it.
-nnoremap <expr> <F13> '\V' . escape(@", '\') . '<CR>'
-vmap * y/<F13>
-vmap # y?<F13>
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gV:call setreg('"', old_reg, old_regtype)<CR>
 "" }}}
 "" tab navigation _tabnav_ {{{
 nnoremap <Tab> gt

@@ -9,8 +9,8 @@ source $DOTFILES/Scripts/sns.sh
 source $DOTFILES/Scripts/comma.sh
 
 export MAN_POSIXLY_CORRECT=1
-export LESS=iqRJ
-# --ignore-case --quiet --RAW-CONTROL-CHARS --status-column
+export LESS=qRJ
+# --quiet --RAW-CONTROL-CHARS --status-column
 
-export EDITOR=/usr/bin/vim
+export EDITOR=vim
 
