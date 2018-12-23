@@ -1,2 +1,186 @@
-tmux 'new-window "htop"; new-window "sudo openvpn --auth-user-pass ~/.local/nordvpn/username.txt /etc/openvpn/ovpn_udp/fr194.nordvpn.com.udp.ovpn"; new-window'
+#!/usr/bin/env perl
 
+use v5.20;
+use Term::ReadKey;
+
+my $session_name = "usual";  # tmux session name
+my $openvpn_config = "/etc/openvpn/ovpn_udp/fr194.nordvpn.com.udp.ovpn";
+my $vpn_username = 'tilwa.qendov@gmail.com';
+my $temp_vpn_file = "/tmp/usual_vpn_pass";
+my $temp_file = "/tmp/usual_pass";  # to temporarily store the password
+
+
+# Checks if $target tmux session exists
+sub check_session {
+	my $target = shift;
+	# Returns 0 if it exists, 1 otherwise
+	# Needs to be a single string to be interpreted by the shell,
+	# which is needed for stream redirection
+	system "tmux has-session -t $target > /dev/null 2>&1";
+	not $? >> 8;
+}
+
+
+# Prompt for a password with $prompt
+sub get_password {
+	# Depends on Term::ReadKey
+	my $prompt = shift;
+	my $password;
+
+	print $prompt;
+	# from https://docstore.mik.ua/orelly/perl/cookbook/ch15_11.htm
+	ReadMode 'noecho';
+	$password = ReadLine 0;
+	chomp $password;
+	ReadMode 'normal';
+	print "\n";
+
+	$password;
+}
+
+
+# Enable sudo in the $target tmux window using the $pass_file
+# $pass_file contains the password and a newline
+sub enable_sudo {
+	my $target = shift;
+	my $pass_file = shift;
+	system "tmux", "send-keys", "-t", $target,
+		"sudo --validate --stdin < $pass_file",
+		"Enter";
+}
+
+
+# Execute $command in the $target tmux session
+sub send_command {
+	my $target = shift;
+	my $command = shift;
+	system "tmux", "send-keys", "-t", $session_name,
+		$command,
+		"Enter";
+}
+
+
+# Write $content to $file
+sub write_to_file {
+	my $file = shift;
+	my $content = shift;
+
+	open my $fh, ">", $file;
+	print { $fh } $content;
+	close $fh;
+}
+
+
+# Create a $pass_file containing the password with a trailing newline
+# Used for sudo --stdin
+sub create_password_file {
+	my $pass_file = shift;
+
+	my $password = get_password "Enter password for root functionality: ";
+	write_to_file $pass_file, $password . "\n";
+}
+
+
+# Deletes the $file after $n seconds (using a fork)
+sub delete_file {
+	my $file = shift;
+	my $n = shift;
+	my $pid = fork ();
+	if (not $pid) {
+		sleep $n;
+		unlink $file;
+		exit;
+	}
+}
+
+
+# Prompt for the VPN password, leave blank to disable
+sub prompt_vpn {
+	my $password =
+		get_password "Enter VPN password, or leave blank to disable: ";
+	($password ne "", $password)
+}
+
+
+# Creates the VPN auth-password $file given $password
+# Used by openvpn --auth-user-pass
+sub create_vpn_file {
+	my $file = shift;
+	my $password = shift;
+	write_to_file $file, "$vpn_username\n$password\n"
+}
+
+
+# Creates a new tmux window for $target with $name if given
+sub new_window {
+	my $target = shift;
+	my $name = shift;  # optional
+
+	my $name_command = ( defined $name ? "-n $name" : "" );
+
+	# Cat for correct arg splitting
+	system "tmux new-window -t $target $name_command";
+}
+
+
+# Creates a new tmux session named $name
+# It detaches from it
+sub new_session {
+	my $name = shift;
+	# -d for detach
+	system "tmux", "new-session", "-d", "-s", $name;
+}
+
+
+
+sub create_session {
+	# Sudo password
+	create_password_file $temp_file;
+	# VPN password
+	my ($using_vpn, $vpn_pass) = prompt_vpn $temp_vpn_file;
+	if ($using_vpn) {
+		create_vpn_file $temp_vpn_file, $vpn_pass;
+	}
+
+	#system "sudo", "--validate";  # Does not carry sudo access
+	#my $root_access = not $? >> 8;
+
+	say "Creating session";
+
+	# Window 0
+	new_session $session_name;
+	send_command $session_name, "htop";
+	# Window 1
+	new_window $session_name, "IO";
+	enable_sudo $session_name, $temp_file;
+	send_command $session_name, "sudo iotop";
+	# Window 2
+	if ($using_vpn) {
+		new_window $session_name, "VPN";
+		enable_sudo $session_name, $temp_file;
+		send_command $session_name,
+			"sudo openvpn --mute-replay-warnings --config $openvpn_config --auth-user-pass $temp_vpn_file";
+	}
+	# Window 3(2)
+	new_window $session_name;
+
+	delete_file $temp_file, 1;
+	delete_file $temp_vpn_file, 10;  # Longer timeout needed apparently
+
+	# In case the password is wrong, sudo will ask for it again,
+	# so switch to that window
+	system "tmux", "select-window", "-t", $session_name . ":1";
+
+}
+
+
+
+my $session_exists = check_session $session_name;
+if (not $session_exists) {
+	create_session ();
+}
+exec "tmux", "attach-session", "-t", $session_name;
+
+
+# Old bash command
+#tmux new-session\; send-keys -t 0 "htop" Enter\; new-window\; send-keys -t 1 "sudo openvpn --mute-replay-warnings --config /etc/openvpn/ovpn_udp/fr194.nordvpn.com.udp.ovpn" Enter\; new-window\; previous-window'
