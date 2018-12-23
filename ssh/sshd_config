@@ -33,7 +33,7 @@ StrictModes yes
 #DenyUsers
 #AllowUsers
 #DenyGroups
-#AllowGroups ssh
+AllowGroups ssh
 
 #AuthenticationMethods any
 #PubkeyAuthentication yes
