@@ -26,7 +26,7 @@ sd () {
 }
 
 # Root filesystem disk usage
-alias rdf="df -h /"
+alias rdf="df -h --total / /alt/* 2>/dev/null"
 
 # df of /dev/*
 adf () {
