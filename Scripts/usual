@@ -1,13 +1,16 @@
 #!/usr/bin/env perl
 
 use v5.20;
+no warnings 'experimental::smartmatch';
 use Term::ReadKey;
+
 
 my $session_name = "usual";  # tmux session name
 my $openvpn_config = "/etc/openvpn/ovpn_udp/fr194.nordvpn.com.udp.ovpn";
 my $vpn_username = 'tilwa.qendov@gmail.com';
 my $temp_vpn_file = "/tmp/usual_vpn_pass";
 my $temp_file = "/tmp/usual_pass";  # to temporarily store the password
+
 
 
 # Checks if $target tmux session exists
@@ -173,13 +176,41 @@ sub create_session {
 
 }
 
+sub attach {
+	my $force = 0;
+	if ($ARGV[0] eq "-f") { $force = 1 }
 
-
-my $session_exists = check_session $session_name;
-if (not $session_exists) {
-	create_session ();
+	# Try to prevent tmux recursion
+	my $is_tmux = $ENV{'TERM'} eq "screen" && length $ENV{'TMUX'};
+	if (!$is_tmux or $force) {
+		exec "tmux", "attach-session", "-t", $session_name;
+	} else {
+		say "You are trying to launch tmux inside a tmux session.";
+		say "Use -f to ignore this warning."
+	}
 }
-exec "tmux", "attach-session", "-t", $session_name;
+
+sub default_action {
+	my $session_exists = check_session $session_name;
+	if (not $session_exists) {
+		create_session ();
+	}
+	attach ();
+}
+
+
+my $arg = shift @ARGV;
+
+given ($arg) {
+	when ("kill") { exec "tmux", "kill-session", "-t", $session_name }
+	when ("edit") { exec "$ENV{'EDITOR'} $0" }
+	when ("vpn") { exec "sudo openvpn --mute-replay-warnings" .
+		"--config $openvpn_config" }
+	when ("create") { create_session () }
+	when ("attach") { attach () }
+	when (defined) { unshift @ARGV; continue; }
+	default { default_action () }
+}
 
 
 # Old bash command
