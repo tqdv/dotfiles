@@ -94,6 +94,7 @@ syntax enable
 " .md -> markdown (instead of modula2)
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:is_bash = 1 " .sh is bash
+autocmd BufNewFile,BufReadPost *.tpp set filetype=cpp " C++ header files
 "" }}}
 set modeline
 " }}}
@@ -182,10 +183,10 @@ nnoremap ~~ ~l
 nnoremap ~` ~~
 "" }}}
 "" Windows navigation {{{
-noremap <C-H> <C-W>h
-noremap <C-J> <C-W>j
-noremap <C-K> <C-W>k
-noremap <C-L> <C-W>l
+nnoremap <C-H> <C-W>h
+nnoremap <C-J> <C-W>j
+nnoremap <C-K> <C-W>k
+nnoremap <C-L> <C-W>l
 "" }}}
 "" map <Esc> {{{
 inoremap jkj <Esc>
