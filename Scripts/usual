@@ -1,5 +1,45 @@
 #!/usr/bin/env perl
 
+=head1 NAME
+
+Local::App::Usual - Start your usual terminal session
+=cut
+
+package Local::App::Usual;
+
+=head1 USAGE
+
+	$ usual
+
+=head1 DESCRIPTION
+
+This script sets up my usual tmux session, with optional sudo and vpn
+If the session already exists, just resume it.
+
+=head1 OPTIONS
+
+ -f        force tmux to run inside another tmux section
+
+=head1 CONFIGURATION
+
+=head1 DEPENDENCIES
+
+=over 5
+
+=item L<Term::ReadKey|Term::ReadKey>
+
+=item tmux
+
+=item htop
+
+=item openvpn (optional)
+
+=item iotop
+
+=back
+
+=cut
+
 use v5.20;
 no warnings 'experimental::smartmatch';
 use Term::ReadKey;
@@ -12,6 +52,12 @@ my $temp_vpn_file = "/tmp/usual_vpn_pass";
 my $temp_file = "/tmp/usual_pass";  # to temporarily store the password
 
 
+# Escapes a string for the shell
+sub shell_string {
+	my $string = shift;
+	$string =~ s/'/'\\\''/;
+	return "'" . $string . "'";
+}
 
 # Checks if $target tmux session exists
 sub check_session {
@@ -19,8 +65,15 @@ sub check_session {
 	# Returns 0 if it exists, 1 otherwise
 	# Needs to be a single string to be interpreted by the shell,
 	# which is needed for stream redirection
-	system "tmux has-session -t $target > /dev/null 2>&1";
-	not $? >> 8;
+	system "tmux has-session"
+	 . " -t " . shell_string ($target)
+	 . " > /dev/null 2>&1";
+	return not $? >> 8;
+}
+
+# Are we in a tmux session ?
+sub in_tmux {
+	$ENV{'TERM'} eq "screen" && length $ENV{'TMUX'}
 }
 
 
@@ -119,10 +172,10 @@ sub new_window {
 	my $target = shift;
 	my $name = shift;  # optional
 
-	my $name_command = ( defined $name ? "-n $name" : "" );
 
-	# Cat for correct arg splitting
-	system "tmux new-window -t $target $name_command";
+	system "tmux new-window"
+	  . " -t " . shell_string ($target)
+	  . ( defined $name ? " -n $name" : "" );
 }
 
 
@@ -167,7 +220,7 @@ sub create_session {
 	# Window 3(2)
 	new_window $session_name;
 
-	delete_file $temp_file, 1;
+	delete_file $temp_file, 3;
 	delete_file $temp_vpn_file, 10;  # Longer timeout needed apparently
 
 	# In case the password is wrong, sudo will ask for it again,
@@ -181,13 +234,20 @@ sub attach {
 	if ($ARGV[0] eq "-f") { $force = 1 }
 
 	# Try to prevent tmux recursion
-	my $is_tmux = $ENV{'TERM'} eq "screen" && length $ENV{'TMUX'};
-	if (!$is_tmux or $force) {
+	if (!in_tmux() || $force) {
 		exec "tmux", "attach-session", "-t", $session_name;
 	} else {
 		say "You are trying to launch tmux inside a tmux session.";
 		say "Use -f to ignore this warning."
 	}
+}
+
+sub launch_vpn {
+	if (in_tmux ()) {
+		system "tmux", "rename-window", "VPN";
+	}
+	exec "sudo openvpn --mute-replay-warnings" .' '.
+		"--config $openvpn_config";
 }
 
 sub default_action {
@@ -204,8 +264,7 @@ my $arg = shift @ARGV;
 given ($arg) {
 	when ("kill") { exec "tmux", "kill-session", "-t", $session_name }
 	when ("edit") { exec "$ENV{'EDITOR'} $0" }
-	when ("vpn") { exec "sudo openvpn --mute-replay-warnings" .
-		"--config $openvpn_config" }
+	when ("vpn") { launch_vpn () }
 	when ("create") { create_session () }
 	when ("attach") { attach () }
 	when (defined) { unshift @ARGV; continue; }
@@ -213,5 +272,19 @@ given ($arg) {
 }
 
 
-# Old bash command
-#tmux new-session\; send-keys -t 0 "htop" Enter\; new-window\; send-keys -t 1 "sudo openvpn --mute-replay-warnings --config /etc/openvpn/ovpn_udp/fr194.nordvpn.com.udp.ovpn" Enter\; new-window\; previous-window'
+=head1 BUGS AND LIMITATION
+
+None yet, report them to tilwa@kawa.tf
+
+=head1 AUTHOR
+
+Tilwa Qendov <tilwa@kawa.tf>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright 2019 Tilwa Qendov.
+
+This program is free software, you can redistribute it and/or modify it under the terms of the Artistic License v2.0.
+
+See L<http://www.perlfoundation.org/artistic_license_2_0>
+=cut
