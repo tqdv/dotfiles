@@ -1,0 +1,13 @@
+#!/bin/bash
+
+echo -n -e "Network "
+if ping 8.8.8.8 -c 1 > /dev/null 2>&1
+then
+	echo -e -n "OK\nDNS ";
+	if nslookup -timeout=5 -retry=0 random.org > /dev/null
+	# ping -w takes about 25 seconds if DNS fails
+	then echo -e -n "OK\n"
+	else echo -e -n "NOK\n  Check DNS (run seton?)\n"
+	fi
+else echo -e -n "NOK\n"
+fi

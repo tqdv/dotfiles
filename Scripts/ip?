@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 use v5.20;
 
-system "curl", "ifconfig.me";
-print "\n";
+my $ip = `curl ifconfig.me`;
+$ip //= `curl kawa.tf/ip.php`;
+print "$ip$/";
