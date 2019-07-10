@@ -1,63 +1,17 @@
 #!/usr/bin/env perl
 
-=head1 NAME
-
-Local::App::Usual - Start your usual terminal session
-=cut
-
-package Local::App::Usual;
-
-=head1 USAGE
-
-	$ usual
-
-=head1 DESCRIPTION
-
-This script sets up my usual tmux session, with optional sudo and vpn
-If the session already exists, just resume it.
-
-=head1 OPTIONS
-
- -f        force tmux to run inside another tmux section
-
-=head1 CONFIGURATION
-
-=head1 DEPENDENCIES
-
-=over 5
-
-=item L<Term::ReadKey|Term::ReadKey>
-
-=item tmux
-
-=item htop
-
-=item openvpn (optional)
-
-=item iotop
-
-=back
-
-=cut
-
 use v5.20;
 no warnings 'experimental::smartmatch';
 use Term::ReadKey;
 
 
 my $session_name = "usual";  # tmux session name
-my $openvpn_config = "/etc/openvpn/ovpn_udp/fr194.nordvpn.com.udp.ovpn";
+my $openvpn_config = "/etc/openvpn/ovpn_udp/fr278.nordvpn.com.udp.ovpn";
 my $vpn_username = 'tilwa.qendov@gmail.com';
 my $temp_vpn_file = "/tmp/usual_vpn_pass";
 my $temp_file = "/tmp/usual_pass";  # to temporarily store the password
 
 
-# Escapes a string for the shell
-sub shell_string {
-	my $string = shift;
-	$string =~ s/'/'\\\''/;
-	return "'" . $string . "'";
-}
 
 # Checks if $target tmux session exists
 sub check_session {
@@ -65,10 +19,8 @@ sub check_session {
 	# Returns 0 if it exists, 1 otherwise
 	# Needs to be a single string to be interpreted by the shell,
 	# which is needed for stream redirection
-	system "tmux has-session"
-	 . " -t " . shell_string ($target)
-	 . " > /dev/null 2>&1";
-	return not $? >> 8;
+	system "tmux has-session -t $target > /dev/null 2>&1";
+	not $? >> 8;
 }
 
 # Are we in a tmux session ?
@@ -172,10 +124,10 @@ sub new_window {
 	my $target = shift;
 	my $name = shift;  # optional
 
+	my $name_command = ( defined $name ? "-n $name" : "" );
 
-	system "tmux new-window"
-	  . " -t " . shell_string ($target)
-	  . ( defined $name ? " -n $name" : "" );
+	# Cat for correct arg splitting
+	system "tmux new-window -t $target $name_command";
 }
 
 
@@ -270,21 +222,3 @@ given ($arg) {
 	when (defined) { unshift @ARGV; continue; }
 	default { default_action () }
 }
-
-
-=head1 BUGS AND LIMITATION
-
-None yet, report them to tilwa@kawa.tf
-
-=head1 AUTHOR
-
-Tilwa Qendov <tilwa@kawa.tf>
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2019 Tilwa Qendov.
-
-This program is free software, you can redistribute it and/or modify it under the terms of the Artistic License v2.0.
-
-See L<http://www.perlfoundation.org/artistic_license_2_0>
-=cut
