@@ -8,6 +8,7 @@
 " notes:
 "   - do not use this vimrc as root (modelines are enabled)
 "   - viminfo location is ~/.vim/viminfo
+"   - vimundo at ~/.vim/undodir
 "   - noexpandtab
 "   - :Nu[mbers]
 "   - :L[ist]
@@ -30,6 +31,8 @@ set viminfo='100,<100,s10,n$HOME/.vim/viminfo
 " s register size in kB
 " n filename
 set history=50
+set undofile
+set undodir=$HOME/.vim/undodir
 "" }}}
 "" Colors {{{
 set background=dark
@@ -80,6 +83,7 @@ set tildeop
 " cf _tilderemap_
 "" }}}
 set timeoutlen=300
+set mouse="" " No mouse in TUI
 " }}}
 
 " Tabs {{{
