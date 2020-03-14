@@ -8,6 +8,10 @@ Add the `DOTFILES` variable to your `.bashrc`, then source various files in `Scr
 
 The file format is currently inconsistent, maybe a table will help...
 
+## Useful things
+
+git-commitas: A script to manage multiple users on the same machine
+
 ## vimrc
 
 This is the file I edit the most (for some reason).
