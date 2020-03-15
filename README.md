@@ -10,7 +10,20 @@ The file format is currently inconsistent, maybe a table will help...
 
 ## Useful things
 
-git-commitas: A script to manage multiple users on the same machine
+### git-commitas
+
+**Use case:** You're on a shared computer, and you're using git. You forget to set your username and email each time you use it, or you don't want to set it globally, and have someone else commit under your name. git-commitas lets you decide who is the committer without setting environment variables on the commandline.
+
+For a user John, they would have this in their git config:
+```ini
+[users "John"]
+    name = "John Doe"
+    email = "john.doe@example.com"
+```
+And would commit with this command:
+```bash
+git commitas John -m "Work committed by John"
+```
 
 ## vimrc
 
