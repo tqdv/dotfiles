@@ -4,8 +4,8 @@ use v5.26;
 
 my $USAGE = <<~END;
 	Usage: git commitas <as-user> <arguments>
-	       git commitas [ --help | -h ]
-	       git commitas [ --man ]
+	       git commitas --help | -h
+	       git commitas --man
 	END
 
 my $MAN = <<~END;

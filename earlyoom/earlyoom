@@ -1,4 +1,6 @@
-# Default settings for earlyoom. This file is sourced by /bin/sh from
+# Settings for earlyoom. This file is sourced by /bin/sh from
 # /etc/init.d/earlyoom or by systemd from earlyoom.service.
 
-EARLYOOM_ARGS="-r 60 -m 5,3 -s 100,100"
+# Based on a system with 7.7 GiB of RAM, 2% is around 150 MiB.
+
+EARLYOOM_ARGS="-r 60 -m 2,1 -s 100,100"

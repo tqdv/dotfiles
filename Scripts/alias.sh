@@ -36,3 +36,7 @@ adf () {
 alias ,iftop="iftop -B -m 1024K -n"
 
 alias ,=comma
+
+# Ignore Unity .meta files
+alias uls="ls --ignore='*.meta'"
+alias utree="tree -I '*.meta'"

@@ -4,8 +4,8 @@
 
 USAGE="$(cat << END
 Usage: git commitas <as-user> <arguments>
-       git commitas [ --help | -h ]
-       git commitas [ --man ]
+       git commitas --help | -h
+       git commitas --man
 END
 )"
 

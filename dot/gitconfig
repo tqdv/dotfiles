@@ -3,3 +3,8 @@
 	name = Tilwa Qendov
 [push]
 	default = simple
+[alias]
+	adog = log --all --decorate --oneline --graph
+	rel = log --graph --abbrev-commit --decorate --date=relative --all
+	log2 = log --all --graph --format='%C(auto)%h %<(16)%C(magenta)%ar%C(auto) %s%d %C(cyan)%an'
+	s = status
