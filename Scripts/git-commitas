@@ -1,93 +1,89 @@
-#!/usr/bin/perl
+#!/bin/sh
 
-use v5.26;
+# Use shellcheck to lint
 
-my $USAGE = <<~END;
-	Usage: git commitas <as-user> <arguments>
-	       git commitas [ --help | -h ]
-	       git commitas [ --man ]
-	END
+USAGE="$(cat << END
+Usage: git commitas <as-user> <arguments>
+       git commitas [ --help | -h ]
+       git commitas [ --man ]
+END
+)"
 
-my $MAN = <<~END;
-	$USAGE
-	This script overrides the GIT_AUTHOR_* and GIT_COMMITTER_* environment variables
-	with git config values users.<as-user>.name and users.<as-user>.email.
+MAN="$(cat << END
+$USAGE
 
-	For a user named John, you would add this to your git config:
-	```
-	[users "John"]
-		name = "John Doe"
-		email = "john.doe\@example.com"
-	```
-	And call it as so: git commitas John <arguments>
+This script overrides the GIT_AUTHOR_* and GIT_COMMITTER_* environment variables
+with git config values users.<as-user>.name and users.<as-user>.email.
 
-	Note that <as-user> is case-sensitive and can not start with a hyphen.
+For a user named John, you would add this to your git config:
+\`\`\`
+[users "John"]
+    name = "John Doe"
+    email = "john.doe@example.com"
+\`\`\`
+And call it as so: git commitas John <arguments>
 
-	Dependencies: bash, perl, env
+Note that <as-user> is case-sensitive and can not start with a hyphen.
 
-	Licensed by Tilwa Qendov under The Artistic 2.0 license
-	END
+Dependencies: sh, [cat, cut, tr, env](probably POSIX), git
+
+Licensed by Tilwa Qendov under The Artistic 2.0 license
+END
+)"
+
 
 # Check arguments
-my $useras = shift @ARGV;
-unless ($useras) {
-	say STDERR "Error: missing user name";
-	print STDERR $USAGE;
-	exit 1;
-}
+useras=$1
+shift
+
+if [ -z "$useras" ]
+then
+	echo "Error: missing user name" >&2
+	echo "$USAGE" >&2
+	exit 1
+fi
 
 # Handle help, manual and unknown flags
-if ($useras eq '--help' || $useras eq '-h') {
-	print $USAGE;
-	exit 0;
-} elsif ($useras eq '--man') {
-	print $MAN;
-	exit 0;
-} elsif ($useras =~ /^-/) {
-	say STDERR "Error: unknown flag '$useras'";
-	exit 1;
-}
+if [ "$useras" = '--help' ] || [ "$useras" = '-h' ]
+then
+	echo "$USAGE"
+	exit 0
+elif [ "$useras" = '--man' ]
+then
+	echo "$MAN"
+	exit 0
+elif [ "$(echo "$useras" | cut -c1)" = '-' ] # First character is '-'
+then
+	echo "Error: unknown flag '$useras'" >&2
+	exit 1
+fi
 
 # Filter invalid characters
 # NB: command line can't contain the null byte anyways
-my $invalid = $useras =~ s/[\n\0]//g;
-if ($invalid) {
-	say STDERR "Error: invalid user-as";
-	exit 1;
-}
-
-# Quote for shell
-my $useras_e = $useras =~ s/'/'\\''/gr;
-$useras_e = qq('$useras');
+invalid="$(echo "$useras" | tr -d '\n\000')"
+if [ "$useras" != "$invalid" ] # Some characters were stripped
+then
+	echo "Error: invalid user-as" >&2
+	exit 1
+fi
 
 # Query git config
-my $name  = qx[ git config --get users.$useras_e.name ];
-chomp $name;
-if ($? >> 8 == 1) {
-	say STDERR "Error: could not find 'users.$useras.name'";
-	exit 1;
-}
+name="$(git config --get "users.$useras.name")"
+if [ $? -eq 1 ]
+then
+	echo "Error: could not find 'users.$useras.name'" >&2
+	exit 1
+fi
 
-my $email = qx[ git config --get users.$useras_e.email ];
-chomp $email;
-if ($? >> 8 == 1) {
-	say STDERR "Error: could not find 'users.$useras.email'";
-	exit 1;
-}
+email="$(git config --get "users.$useras.email")"
+if [ $? -eq 1 ]
+then
+	echo "Error: could not find 'users.$useras.email'" >&2
+	exit 1
+fi
 
-say qq(git-commitas: Committing as "$name" <$email>);
+echo "git-commitas: committing as \"$name\" <$email>"
 
-my @command = @ARGV;
-
-# Add our command
-unshift @command, "git", "commit";
-
-# Add our environment variables
-unshift @command, "GIT_AUTHOR_NAME=$name";
-unshift @command, "GIT_AUTHOR_EMAIL=$email";
-unshift @command, "GIT_COMMITTER_NAME=$name";
-unshift @command, "GIT_COMMITTER_EMAIL=$email";
-
-unshift @command, "env";
-
-exec { $command[0] } @command;
+exec env "GIT_AUTHOR_NAME=$name" "GIT_AUTHOR_EMAIL=$email" \
+	"GIT_COMMITTER_NAME=$name" "GIT_COMMITTER_EMAIL=$email" \
+	git commit "$@"
