@@ -31,8 +31,8 @@ my $MAN = <<~END;
 # Check arguments
 my $useras = shift @ARGV;
 unless ($useras) {
-	say "Error: missing user name";
-	print $USAGE;
+	say STDERR "Error: missing user name";
+	print STDERR $USAGE;
 	exit 1;
 }
 
@@ -49,6 +49,7 @@ if ($useras eq '--help' || $useras eq '-h') {
 }
 
 # Filter invalid characters
+# NB: command line can't contain the null byte anyways
 my $invalid = $useras =~ s/[\n\0]//g;
 if ($invalid) {
 	say STDERR "Error: invalid user-as";
@@ -63,18 +64,18 @@ $useras_e = qq('$useras');
 my $name  = qx[ git config --get users.$useras_e.name ];
 chomp $name;
 if ($? >> 8 == 1) {
-	say STDERR "Error: could not find users.$useras.name";
+	say STDERR "Error: could not find 'users.$useras.name'";
 	exit 1;
 }
 
 my $email = qx[ git config --get users.$useras_e.email ];
 chomp $email;
 if ($? >> 8 == 1) {
-	say STDERR "Error: could not find users.$useras.email";
+	say STDERR "Error: could not find 'users.$useras.email'";
 	exit 1;
 }
 
-say qq(Committing as "$name" <$email>);
+say qq(git-commitas: Committing as "$name" <$email>);
 
 my @command = @ARGV;
 
